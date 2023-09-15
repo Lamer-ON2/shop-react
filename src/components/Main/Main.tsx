@@ -1,20 +1,19 @@
 import { useEffect, useState } from "react";
 import { SpinnerCircular } from "spinners-react";
-import "./App.css";
-import { ErrorMessage } from "./components/ErrorMessage/ErrorMessage";
-import { Spinner } from "./components/Spinner/Spinner";
-import { Product } from "./components/Product/Product";
-import { useProducts } from "./hooks/products";
-import { IProduct } from "./models";
-import { SvgViewLess } from "./components/UI/Buttons/SvgViewLess";
-import { SvgViewMore } from "./components/UI/Buttons/SvgViewMore";
+import { ErrorMessage } from "../ErrorMessage/ErrorMessage";
+import { Product } from "../Product/Product";
+import { useProducts } from "../../hooks/products";
+import { IProduct } from "../../models";
+import { SvgViewLess } from "../UI/Buttons/SvgViewLess";
+import { SvgViewMore } from "../UI/Buttons/SvgViewMore";
+import { Link } from "react-router-dom";
 
-function App() {
+function Main() {
   const { products, error, loading, loaded } = useProducts();
 
   const [select, setSelect] = useState("");
   const [view, setView] = useState(true);
-  const [sortProducts, setSortProducts] = useState<IProduct[]>([]);
+  // const [sortProducts, setSortProducts] = useState<IProduct[]>([]);
 
   const [search, setSearch] = useState<string>("");
   const [searchProducts, setSearchProducts] = useState<IProduct[]>([]);
@@ -46,7 +45,7 @@ function App() {
         a.price > b.price ? 1 : -1
       );
     }
-    setSortProducts(tmpProducts);
+    // setSortProducts(tmpProducts);
     setSearchProducts(tmpProducts);
   }
 
@@ -75,7 +74,7 @@ function App() {
           value={select}
           onChange={(e) => {
             setSelect(e.target.value);
-            sortByProducts(sortProducts, e.target.value);
+            // sortByProducts(sortProducts, e.target.value);
             sortByProducts(searchProducts, e.target.value);
           }}
           style={{ width: 195, height: 30, marginRight: 10 }}
@@ -85,6 +84,7 @@ function App() {
           <option value="2">From cheap to expensive</option>
         </select>
         <input
+          typeof="search"
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
@@ -153,7 +153,10 @@ function App() {
             {/* {searchProducts.toString() && */}
             {!!searchProducts.length &&
               searchProducts.map((product) => (
+                // <Link key={product.id} to={`/product/${product.id}`}>
                 <Product product={product} view={view} key={product.id} />
+                // </Link>
+                // <Product product={product} view={view} key={product.id} />
               ))}
           </ul>
         }
@@ -162,4 +165,4 @@ function App() {
   );
 }
 
-export default App;
+export default Main;
