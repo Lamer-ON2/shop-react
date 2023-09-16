@@ -8,23 +8,51 @@ import { SvgViewLess } from "../UI/Buttons/SvgViewLess";
 import { SvgViewMore } from "../UI/Buttons/SvgViewMore";
 import { Link } from "react-router-dom";
 
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { fetchProducts } from "../../features/products/productsSlice";
+// ===================
+
 function Main() {
-  const { products, error, loading, loaded } = useProducts();
+  const dispatch = useAppDispatch();
+  const { status, errorLoading } = useAppSelector((state) => state.products);
+  let storageProducts = JSON.parse(
+    localStorage.getItem("storageProducts") || "null"
+  );
+  let productsState = useAppSelector((state) => state.products.products);
+
+  if (localStorage.getItem("storageProducts") != "null") {
+    productsState = storageProducts;
+    //  storageProducts = localStorage.getItem("storageProducts")
+    //  storageProducts = JSON.parse(localStorage.getItem("storageProducts"))
+  }
+  console.log("storage main", typeof storageProducts);
+
+  useEffect(() => {
+    dispatch(fetchProducts());
+  }, [dispatch]);
+
+  // =====================================================
 
   const [select, setSelect] = useState("");
   const [view, setView] = useState(true);
-  // const [sortProducts, setSortProducts] = useState<IProduct[]>([]);
 
   const [search, setSearch] = useState<string>("");
   const [searchProducts, setSearchProducts] = useState<IProduct[]>([]);
 
   useEffect(() => {
-    sortByProducts(products, "0");
+    sortByProducts(
+      // JSON.parse(localStorage.getItem("storageProducts")) || productsState,
+      // localStorage.getItem("storageProducts") || productsState,
+      productsState,
+      "0"
+    );
     setSearch("");
-  }, [products]);
+    console.log(storageProducts);
+    // }, [productsState]);
+  }, []);
 
   useEffect(() => {
-    const filteredCardsTitles = searchFilter(products, search);
+    const filteredCardsTitles = searchFilter(productsState, search);
     setSearchProducts(filteredCardsTitles);
     sortByProducts(filteredCardsTitles, select);
   }, [search]);
@@ -45,7 +73,6 @@ function Main() {
         a.price > b.price ? 1 : -1
       );
     }
-    // setSortProducts(tmpProducts);
     setSearchProducts(tmpProducts);
   }
 
@@ -74,7 +101,6 @@ function Main() {
           value={select}
           onChange={(e) => {
             setSelect(e.target.value);
-            // sortByProducts(sortProducts, e.target.value);
             sortByProducts(searchProducts, e.target.value);
           }}
           style={{ width: 195, height: 30, marginRight: 10 }}
@@ -84,8 +110,6 @@ function Main() {
           <option value="2">From cheap to expensive</option>
         </select>
         <input
-          typeof="search"
-          value={search}
           onChange={(e) => {
             setSearch(e.target.value);
           }}
@@ -94,8 +118,9 @@ function Main() {
             height: 30,
             marginRight: 10,
           }}
+          type="search"
+          value={search}
           placeholder="Search"
-          type="text"
         />
 
         <div style={{ color: "red", width: 100 }}>
@@ -139,24 +164,29 @@ function Main() {
       >
         {
           <ul className="card-list">
-            {loading && (
-              <SpinnerCircular
-                color={"green"}
-                secondaryColor={"white"}
-                size={80}
-                thickness={120}
-                speed={120}
-              />
+            {status == "loading" && (
+              <div
+                style={{
+                  width: "100%",
+                  position: "absolute",
+                  zIndex: 2,
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <SpinnerCircular
+                  color={"green"}
+                  secondaryColor={"grey"}
+                  size={80}
+                  thickness={120}
+                  speed={120}
+                />
+              </div>
             )}
-            {/* {loading && <Spinner />} */}
-            {error && <ErrorMessage error={error} />}
-            {/* {searchProducts.toString() && */}
+            {errorLoading && <ErrorMessage error={errorLoading} />}
             {!!searchProducts.length &&
               searchProducts.map((product) => (
-                // <Link key={product.id} to={`/product/${product.id}`}>
                 <Product product={product} view={view} key={product.id} />
-                // </Link>
-                // <Product product={product} view={view} key={product.id} />
               ))}
           </ul>
         }

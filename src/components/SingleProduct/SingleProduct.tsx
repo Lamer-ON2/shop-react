@@ -12,14 +12,19 @@ export const SingleProduct = () => {
   // let myStorage = window.localStorage;
   localStorage.setItem("storageProducts", JSON.stringify(productsState));
   let storageProducts = JSON.parse(
-    localStorage.getItem("storageProducts") || "{}"
+    localStorage.getItem("storageProducts") || "null"
   );
+  if (storageProducts === "null") {
+    storageProducts = productsState;
+    console.log("null");
+  }
   // let storageProducts;
   // if (localStorage.getItem("storageProducts") != null) {
   //   storageProducts = JSON.parse(localStorage.getItem("storageProducts"));
   // }
 
-  console.log(storageProducts);
+  console.log("storage single", typeof storageProducts);
+  console.log("storage single", storageProducts);
 
   // const product = productsState.find((item) => item.id === Number(id));
   const product = storageProducts?.find((item: any) => item.id === Number(id));

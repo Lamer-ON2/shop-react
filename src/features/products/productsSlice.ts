@@ -68,6 +68,7 @@ const productsSlice = createSlice({
       // console.log("fulfilled");
       state.status = "resolved";
       state.products = action.payload;
+      localStorage.setItem("storageProducts", JSON.stringify(action.payload));
       // return (state = action.payload)
     });
 
