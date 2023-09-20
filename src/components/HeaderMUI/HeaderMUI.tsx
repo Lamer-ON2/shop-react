@@ -1,13 +1,3 @@
-// const HeaderMUI = () => {
-//   return (
-//     <div style={{ marginTop: 40 }}>
-//       <p>HeaderMUI</p>
-//     </div>
-//   );
-// };
-
-// export default HeaderMUI;
-
 import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";

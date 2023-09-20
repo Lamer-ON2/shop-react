@@ -1,71 +1,57 @@
-// import { log } from "console";
-// import { useLoaderData } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import { useAppSelector } from "../../app/hooks";
+import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { IProduct } from "../../models";
 
 import "./SingleProduct.scss";
+import { fetchSingleProduct } from "../../features/products/productsSlice";
 
 export const SingleProduct = () => {
+  const dispatch = useAppDispatch();
+  const { status2, errorLoading } = useAppSelector((state) => state.products);
+  let productState = useAppSelector((state) => state.products.singleProduct);
   const { id } = useParams();
-  let productsState = useAppSelector((state) => state.products.products);
-  // let myStorage = window.localStorage;
-  localStorage.setItem("storageProducts", JSON.stringify(productsState));
-  let storageProducts = JSON.parse(
-    localStorage.getItem("storageProducts") || "null"
-  );
-  if (storageProducts === "null") {
-    storageProducts = productsState;
-    console.log("null");
-  }
-  // let storageProducts;
-  // if (localStorage.getItem("storageProducts") != null) {
-  //   storageProducts = JSON.parse(localStorage.getItem("storageProducts"));
-  // }
 
-  console.log("storage single", typeof storageProducts);
-  console.log("storage single", storageProducts);
-
-  // const product = productsState.find((item) => item.id === Number(id));
-  const product = storageProducts?.find((item: any) => item.id === Number(id));
-
-  // console.log("productsState", productsState);
+  useEffect(() => {
+    dispatch(fetchSingleProduct({ id }));
+  }, [dispatch]);
 
   return (
     <div className="container">
       <div className="wrapper">
-        {/* <span>SingleProduct {id}</span> */}
-        <div className={"card single-card"}>
-          <img
-            src={product?.image}
-            alt={product?.title}
-            width={200}
-            height={200}
-          />
-          <p>{product?.title}</p>
-          <p>
-            <b>Category:</b> {product?.category}
-          </p>
-          <strong className="price">
-            <span>$</span>
-            {product?.price}
-          </strong>
-          <div>
-            <p>{product?.description}</p>
+        {status2 === "resolved" && Object.keys(productState).length && (
+          <div className={"card single-card"}>
+            <img
+              src={productState?.image}
+              alt={productState?.title}
+              width={200}
+              height={200}
+            />
+            <p>{productState?.title}</p>
             <p>
-              Rate:
-              <span style={{ fontWeight: "bold", marginLeft: 5 }}>
-                {product?.rating.rate}
-              </span>
+              <b>Category:</b> {productState?.category}
             </p>
-            <p>
-              Count:
-              <span style={{ fontWeight: "bold", marginLeft: 5 }}>
-                {product?.rating.count}
-              </span>
-            </p>
+            <strong className="price">
+              <span>$</span>
+              {productState?.price}
+            </strong>
+            <div>
+              <p>{productState?.description}</p>
+              <p>
+                Rate:
+                <span style={{ fontWeight: "bold", marginLeft: 5 }}>
+                  {productState?.rating.rate}
+                </span>
+              </p>
+              <p>
+                Count:
+                <span style={{ fontWeight: "bold", marginLeft: 5 }}>
+                  {productState?.rating.count}
+                </span>
+              </p>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

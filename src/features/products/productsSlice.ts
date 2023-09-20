@@ -1,30 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-// import type { PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import { IProduct } from "../../models";
-// import { useAppDispatch } from "../../app/hooks";
-
-// const initialState: IProduct[] = [
-//   {
-//     id: 0,
-//     title: "",
-//     price: 0,
-//     description: "",
-//     category: "",
-//     image: "",
-//     rating: {
-//       rate: 1,
-//       count: 1,
-//     },
-//   },
-// ];
-
-// const initialState: any = [];
-// const dispatch = useAppDispatch();
 
 const initialState = {
   products: [] as IProduct[],
+  singleProduct: {} as IProduct,
   status: "" as string,
+  status2: "" as string,
   errorLoading: "" as any,
 };
 
@@ -33,11 +15,32 @@ export const fetchProducts = createAsyncThunk(
   async (_, { rejectWithValue, dispatch }) => {
     try {
       const response = await axios.get<IProduct[]>(
-        "https://fakestoreapi.com/products?limit=2"
+        "https://fakestoreapi.com/products?limit=5"
       );
       if (response.status < 200 || response.status >= 300) {
         throw new Error("Server Error!");
       }
+      return response.data;
+    } catch (error: any) {
+      if (!error.response) {
+        throw error;
+      }
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const fetchSingleProduct = createAsyncThunk(
+  "products/fetchSingleProduct",
+  async (data: { id: string | undefined }, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await axios.get<IProduct>(
+        `https://fakestoreapi.com/products/${data?.id || {}}?limit=1`
+      );
+      if (response.status < 200 || response.status >= 300) {
+        throw new Error("Server Error!");
+      }
+
       return response.data;
     } catch (error: any) {
       if (!error.response) {
@@ -68,15 +71,32 @@ const productsSlice = createSlice({
       // console.log("fulfilled");
       state.status = "resolved";
       state.products = action.payload;
-      localStorage.setItem("storageProducts", JSON.stringify(action.payload));
-      // return (state = action.payload)
+      // localStorage.setItem("storageProducts", JSON.stringify(action.payload));
     });
 
     builder.addCase(fetchProducts.rejected, (state, action) => {
       console.log("rejected", action.payload);
       state.status = "rejected";
       state.errorLoading = action.payload;
-      // state.error = toString(action.payload);
+    });
+
+    builder.addCase(fetchSingleProduct.pending, (state, action) => {
+      // console.log("pending");
+      state.status2 = "loading";
+      state.errorLoading = "";
+      state.singleProduct = {} as IProduct;
+    });
+
+    builder.addCase(fetchSingleProduct.fulfilled, (state, action) => {
+      // console.log("fulfilled");
+      state.status2 = "resolved";
+      state.singleProduct = action.payload;
+    });
+
+    builder.addCase(fetchSingleProduct.rejected, (state, action) => {
+      // console.log("rejected", action.payload);
+      state.status2 = "rejected";
+      state.errorLoading = action.payload;
     });
   },
 });

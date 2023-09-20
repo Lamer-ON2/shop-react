@@ -2,11 +2,14 @@ import { useEffect, useState } from "react";
 import { SpinnerCircular } from "spinners-react";
 import { ErrorMessage } from "../ErrorMessage/ErrorMessage";
 import { Product } from "../Product/Product";
-import { useProducts } from "../../hooks/products";
 import { IProduct } from "../../models";
 import { SvgViewLess } from "../UI/Buttons/SvgViewLess";
 import { SvgViewMore } from "../UI/Buttons/SvgViewMore";
-import { Link } from "react-router-dom";
+import Fab from "@mui/material/Fab";
+
+import DragIndicatorSharpIcon from "@mui/icons-material/DragIndicatorSharp";
+import AppsSharpIcon from "@mui/icons-material/AppsSharp";
+import { FABButton } from "../UI/Buttons/FABButton/FABButton";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { fetchProducts } from "../../features/products/productsSlice";
@@ -15,23 +18,8 @@ import { fetchProducts } from "../../features/products/productsSlice";
 function Main() {
   const dispatch = useAppDispatch();
   const { status, errorLoading } = useAppSelector((state) => state.products);
-  let storageProducts = JSON.parse(
-    localStorage.getItem("storageProducts") || "null"
-  );
+
   let productsState = useAppSelector((state) => state.products.products);
-
-  if (localStorage.getItem("storageProducts") != "null") {
-    productsState = storageProducts;
-    //  storageProducts = localStorage.getItem("storageProducts")
-    //  storageProducts = JSON.parse(localStorage.getItem("storageProducts"))
-  }
-  console.log("storage main", typeof storageProducts);
-
-  useEffect(() => {
-    dispatch(fetchProducts());
-  }, [dispatch]);
-
-  // =====================================================
 
   const [select, setSelect] = useState("");
   const [view, setView] = useState(true);
@@ -40,22 +28,22 @@ function Main() {
   const [searchProducts, setSearchProducts] = useState<IProduct[]>([]);
 
   useEffect(() => {
-    sortByProducts(
-      // JSON.parse(localStorage.getItem("storageProducts")) || productsState,
-      // localStorage.getItem("storageProducts") || productsState,
-      productsState,
-      "0"
-    );
+    if (!productsState.length) {
+      dispatch(fetchProducts());
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    sortByProducts(productsState, "0");
     setSearch("");
-    console.log(storageProducts);
-    // }, [productsState]);
-  }, []);
+  }, [productsState]);
+  // }, []);
 
   useEffect(() => {
     const filteredCardsTitles = searchFilter(productsState, search);
     setSearchProducts(filteredCardsTitles);
     sortByProducts(filteredCardsTitles, select);
-  }, [search]);
+  }, [search, select, productsState]);
 
   function sortByProducts(arr: IProduct[], value: string) {
     const tmpProducts = JSON.parse(JSON.stringify(arr));
@@ -93,6 +81,7 @@ function Main() {
           display: "flex",
           alignItems: "center",
           justifyContent: "start",
+          flexWrap: "wrap",
           paddingTop: 15,
           paddingBottom: 15,
         }}
@@ -135,6 +124,18 @@ function Main() {
           }}
         >
           {/* view less */}
+          <Fab
+            onClick={() => {
+              setView(false);
+            }}
+            // sx={{
+            //   display: visible ? "flex" : "none",
+            // }}
+            size="small"
+            aria-label="view less"
+          >
+            <DragIndicatorSharpIcon />
+          </Fab>
           <button
             className={`card-size-btn ${view ? "" : "active"}`}
             onClick={() => {
@@ -164,7 +165,7 @@ function Main() {
       >
         {
           <ul className="card-list">
-            {status == "loading" && (
+            {status === "loading" && (
               <div
                 style={{
                   width: "100%",
@@ -185,12 +186,14 @@ function Main() {
             )}
             {errorLoading && <ErrorMessage error={errorLoading} />}
             {!!searchProducts.length &&
+              status === "resolved" &&
               searchProducts.map((product) => (
                 <Product product={product} view={view} key={product.id} />
               ))}
           </ul>
         }
       </div>
+      <FABButton />
     </div>
   );
 }
