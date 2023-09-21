@@ -4,7 +4,7 @@ import Fab from "@mui/material/Fab";
 import KeyboardDoubleArrowUpSharpIcon from "@mui/icons-material/KeyboardDoubleArrowUpSharp";
 import { deepPurple } from "@mui/material/colors";
 
-export const FABButton = () => {
+export const FABToTopButton = () => {
   const [visible, setVisible] = useState(false);
 
   const toggleVisible = () => {

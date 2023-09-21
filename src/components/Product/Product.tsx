@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 interface IProductProps {
   product: IProduct;
-  view: boolean;
+  view: string;
 }
 
 export function Product({ product, view }: IProductProps): JSX.Element {
@@ -16,7 +16,7 @@ export function Product({ product, view }: IProductProps): JSX.Element {
   // const [cardStyle, setCardStyle] = useState(false);
   // const cardStyleClassName = cardStyle ? "" : "hide";
 
-  const CardWidthStyleClassName = view ? "viewMore" : "viewLess";
+  const CardWidthStyleClassName = view === "viewMore" ? "viewMore" : "viewLess";
 
   const cardClasses = ["card", CardWidthStyleClassName];
 
@@ -35,27 +35,7 @@ export function Product({ product, view }: IProductProps): JSX.Element {
         <span>$</span>
         {product.price}
       </strong>
-      {/* {showDetails && (
-        <div>
-          <p>{product.description}</p>
-          <p>
-            Rate:
-            <span style={{ fontWeight: "bold", marginLeft: 5 }}>
-              {product.rating.rate}
-            </span>
-          </p>
-          <p>
-            Count:
-            <span style={{ fontWeight: "bold", marginLeft: 5 }}>
-              {product.rating.count}
-            </span>
-          </p>
-        </div>
-      )} */}
-      {/* <button className="details" onClick={handleShowDetails}> */}
-      {/* <button className={btnClasses.join(" ")} onClick={handleShowDetails}>
-        {showDetails ? "Hide details" : "Show details"}
-      </button> */}
+
       <div className="hidden-details">
         <div className="hidden-details__content">
           <div>

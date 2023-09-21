@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import { IProduct } from "../../models";
 
@@ -8,6 +8,7 @@ const initialState = {
   status: "" as string,
   status2: "" as string,
   errorLoading: "" as any,
+  select: "" as string,
 };
 
 export const fetchProducts = createAsyncThunk(
@@ -55,6 +56,9 @@ const productsSlice = createSlice({
   name: "products",
   initialState,
   reducers: {
+    addSelect(state, action: PayloadAction<string>) {
+      state.select = action.payload;
+    },
     // addProducts(state, action: PayloadAction<IProduct[]>) {
     //   state = action.payload;
     // },
@@ -101,5 +105,5 @@ const productsSlice = createSlice({
   },
 });
 
-// export const { addProducts } = productsSlice.actions;
+export const { addSelect } = productsSlice.actions;
 export default productsSlice.reducer;

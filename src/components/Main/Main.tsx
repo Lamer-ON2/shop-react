@@ -1,28 +1,54 @@
+import * as React from "react";
 import { useEffect, useState } from "react";
 import { SpinnerCircular } from "spinners-react";
 import { ErrorMessage } from "../ErrorMessage/ErrorMessage";
 import { Product } from "../Product/Product";
 import { IProduct } from "../../models";
-import { SvgViewLess } from "../UI/Buttons/SvgViewLess";
-import { SvgViewMore } from "../UI/Buttons/SvgViewMore";
-import Fab from "@mui/material/Fab";
+
+//select
+import { addSelect } from "../../features/products/productsSlice";
+import Box from "@mui/material/Box";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+//end select
+
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 
 import DragIndicatorSharpIcon from "@mui/icons-material/DragIndicatorSharp";
 import AppsSharpIcon from "@mui/icons-material/AppsSharp";
-import { FABButton } from "../UI/Buttons/FABButton/FABButton";
+import { FABToTopButton } from "../UI/Buttons/FABToTopButton/FABToTopButton";
+import { deepPurple } from "@mui/material/colors";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { fetchProducts } from "../../features/products/productsSlice";
-// ===================
 
 function Main() {
   const dispatch = useAppDispatch();
   const { status, errorLoading } = useAppSelector((state) => state.products);
 
   let productsState = useAppSelector((state) => state.products.products);
+  let selectState = useAppSelector((state) => state.products.select);
 
-  const [select, setSelect] = useState("");
-  const [view, setView] = useState(true);
+  const [select, setSelect] = useState(selectState);
+  const [view, setView] = React.useState("viewMore");
+
+  const handleChangeSelect = (event: SelectChangeEvent) => {
+    setSelect(event.target.value as string);
+    sortByProducts(searchProducts, event.target.value);
+    dispatch(addSelect(event.target.value));
+  };
+
+  const handleChangeView = (
+    event: React.MouseEvent<HTMLElement>,
+    nextView: string
+  ) => {
+    if (nextView !== null) {
+      setView(nextView);
+    }
+  };
 
   const [search, setSearch] = useState<string>("");
   const [searchProducts, setSearchProducts] = useState<IProduct[]>([]);
@@ -34,10 +60,9 @@ function Main() {
   }, [dispatch]);
 
   useEffect(() => {
-    sortByProducts(productsState, "0");
+    sortByProducts(productsState, selectState);
     setSearch("");
-  }, [productsState]);
-  // }, []);
+  }, [productsState, selectState]);
 
   useEffect(() => {
     const filteredCardsTitles = searchFilter(productsState, search);
@@ -86,7 +111,24 @@ function Main() {
           paddingBottom: 15,
         }}
       >
-        <select
+        <Box>
+          <FormControl size="small" fullWidth>
+            <InputLabel id="demo-simple-select-label">Sorting</InputLabel>
+            <Select
+              sx={{ minWidth: 230, marginRight: "10px" }}
+              labelId="sort-select-label"
+              id="sort-select"
+              value={select}
+              label="Sorting"
+              onChange={handleChangeSelect}
+            >
+              <MenuItem value={"0"}>Sort by rating</MenuItem>
+              <MenuItem value={"1"}>From expensive to cheap</MenuItem>
+              <MenuItem value={"2"}>From cheap to expensive</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+        {/* <select
           value={select}
           onChange={(e) => {
             setSelect(e.target.value);
@@ -97,7 +139,7 @@ function Main() {
           <option value="0">Sort by rating</option>
           <option value="1">From expensive to cheap</option>
           <option value="2">From cheap to expensive</option>
-        </select>
+        </select> */}
         <input
           onChange={(e) => {
             setSearch(e.target.value);
@@ -123,40 +165,59 @@ function Main() {
             marginLeft: "auto",
           }}
         >
-          {/* view less */}
-          <Fab
-            onClick={() => {
-              setView(false);
-            }}
-            // sx={{
-            //   display: visible ? "flex" : "none",
-            // }}
+          <ToggleButtonGroup
             size="small"
-            aria-label="view less"
+            value={view}
+            exclusive
+            onChange={handleChangeView}
           >
-            <DragIndicatorSharpIcon />
-          </Fab>
-          <button
-            className={`card-size-btn ${view ? "" : "active"}`}
-            onClick={() => {
-              setView(false);
-            }}
-            style={{ width: 30, height: 30, padding: 5 }}
-            title="view less"
-            aria-label="view less"
-          >
-            <SvgViewLess fill="#3e77aa" width="16" height="16" />
-          </button>
-          {/* view more */}
-          <button
-            className={`card-size-btn ${view ? "active" : ""}`}
-            onClick={() => setView(true)}
-            style={{ width: 30, height: 30, padding: 5 }}
-            title="view more"
-            aria-label="view more"
-          >
-            <SvgViewMore fill="#3e77aa" width="16" height="16" />
-          </button>
+            <ToggleButton
+              // style={{ width: 30, height: 30, padding: 5 }}
+              sx={{
+                color: deepPurple[900],
+                backgroundColor: deepPurple[50],
+                transition: "0.2s",
+                "&:hover": {
+                  backgroundColor: deepPurple[100],
+                },
+                "&[aria-pressed='true']": {
+                  color: deepPurple[50],
+                  backgroundColor: deepPurple[900],
+                  "&:hover": {
+                    backgroundColor: deepPurple[800],
+                  },
+                },
+              }}
+              value="viewMore"
+              aria-label="more"
+              title="view more"
+            >
+              <AppsSharpIcon />
+            </ToggleButton>
+            <ToggleButton
+              // style={{ width: 30, height: 30, padding: 5 }}
+              sx={{
+                color: deepPurple[900],
+                backgroundColor: deepPurple[50],
+                transition: "0.2s",
+                "&:hover": {
+                  backgroundColor: deepPurple[100],
+                },
+                "&[aria-pressed='true']": {
+                  color: deepPurple[50],
+                  backgroundColor: deepPurple[900],
+                  "&:hover": {
+                    backgroundColor: deepPurple[800],
+                  },
+                },
+              }}
+              value="viewLess"
+              aria-label="less"
+              title="view less"
+            >
+              <DragIndicatorSharpIcon />
+            </ToggleButton>
+          </ToggleButtonGroup>
         </div>
       </div>
       <div
@@ -193,7 +254,7 @@ function Main() {
           </ul>
         }
       </div>
-      <FABButton />
+      <FABToTopButton />
     </div>
   );
 }
