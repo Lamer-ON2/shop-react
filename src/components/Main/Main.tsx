@@ -14,8 +14,14 @@ import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 //end select
 
+// TextField;
+import TextField from "@mui/material/TextField";
+// end TextField
+
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import Tooltip from "@mui/material/Tooltip";
+import Zoom from "@mui/material/Zoom";
 
 import DragIndicatorSharpIcon from "@mui/icons-material/DragIndicatorSharp";
 import AppsSharpIcon from "@mui/icons-material/AppsSharp";
@@ -104,59 +110,51 @@ function Main() {
         className="catalog-settings"
         style={{
           display: "flex",
-          alignItems: "center",
+          alignItems: "start",
           justifyContent: "start",
           flexWrap: "wrap",
           paddingTop: 15,
           paddingBottom: 15,
         }}
       >
-        <Box>
-          <FormControl size="small" fullWidth>
-            <InputLabel id="demo-simple-select-label">Sorting</InputLabel>
+        <Box component="form">
+          <FormControl size="small">
+            <InputLabel id="sort-select-label">Sorting</InputLabel>
             <Select
-              sx={{ minWidth: 230, marginRight: "10px" }}
+              sx={{ minWidth: 230, marginRight: "10px", marginBottom: "10px" }}
+              size="small"
               labelId="sort-select-label"
               id="sort-select"
               value={select}
               label="Sorting"
               onChange={handleChangeSelect}
             >
-              <MenuItem value={"0"}>Sort by rating</MenuItem>
-              <MenuItem value={"1"}>From expensive to cheap</MenuItem>
-              <MenuItem value={"2"}>From cheap to expensive</MenuItem>
+              <MenuItem value={"0"}>by rating</MenuItem>
+              <MenuItem value={"1"}>from expensive to cheap</MenuItem>
+              <MenuItem value={"2"}>from cheap to expensive</MenuItem>
             </Select>
           </FormControl>
+          <TextField
+            sx={{
+              minWidth: 230,
+              marginRight: "10px",
+              marginBottom: "10px",
+            }}
+            id="outlined-search"
+            error={!searchProducts.toString() && !!search}
+            helperText={
+              !searchProducts.toString() && !!search ? "No results" : null
+            }
+            label="Search"
+            type="search"
+            size="small"
+            onChange={(e) => {
+              setSearch(e.target.value);
+            }}
+            value={search}
+            placeholder="Input text"
+          />
         </Box>
-        {/* <select
-          value={select}
-          onChange={(e) => {
-            setSelect(e.target.value);
-            sortByProducts(searchProducts, e.target.value);
-          }}
-          style={{ width: 195, height: 30, marginRight: 10 }}
-        >
-          <option value="0">Sort by rating</option>
-          <option value="1">From expensive to cheap</option>
-          <option value="2">From cheap to expensive</option>
-        </select> */}
-        <input
-          onChange={(e) => {
-            setSearch(e.target.value);
-          }}
-          style={{
-            width: 180,
-            height: 30,
-            marginRight: 10,
-          }}
-          type="search"
-          value={search}
-          placeholder="Search"
-        />
-
-        <div style={{ color: "red", width: 100 }}>
-          {!searchProducts.toString() && search && <span>No results</span>}
-        </div>
         <div
           className="catalog-buttons"
           style={{
@@ -172,8 +170,9 @@ function Main() {
             onChange={handleChangeView}
           >
             <ToggleButton
-              // style={{ width: 30, height: 30, padding: 5 }}
               sx={{
+                width: 40,
+                height: 40,
                 color: deepPurple[900],
                 backgroundColor: deepPurple[50],
                 transition: "0.2s",
@@ -189,14 +188,30 @@ function Main() {
                 },
               }}
               value="viewMore"
-              aria-label="more"
-              title="view more"
+              aria-label="view more"
             >
-              <AppsSharpIcon />
+              <Tooltip title="View more" arrow TransitionComponent={Zoom}>
+                <div
+                  style={{
+                    display: "flex",
+                    position: "absolute",
+                    top: "0",
+                    right: "0",
+                    bottom: "0",
+                    left: "0",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <AppsSharpIcon />
+                </div>
+              </Tooltip>
             </ToggleButton>
+
             <ToggleButton
-              // style={{ width: 30, height: 30, padding: 5 }}
               sx={{
+                width: 40,
+                height: 40,
                 color: deepPurple[900],
                 backgroundColor: deepPurple[50],
                 transition: "0.2s",
@@ -212,10 +227,24 @@ function Main() {
                 },
               }}
               value="viewLess"
-              aria-label="less"
-              title="view less"
+              aria-label="view less"
             >
-              <DragIndicatorSharpIcon />
+              <Tooltip title="View less" arrow TransitionComponent={Zoom}>
+                <div
+                  style={{
+                    display: "flex",
+                    position: "absolute",
+                    top: "0",
+                    right: "0",
+                    bottom: "0",
+                    left: "0",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <DragIndicatorSharpIcon />
+                </div>
+              </Tooltip>
             </ToggleButton>
           </ToggleButtonGroup>
         </div>
