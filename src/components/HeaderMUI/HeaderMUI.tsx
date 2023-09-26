@@ -1,8 +1,12 @@
 import * as React from "react";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import CloseIcon from "@mui/icons-material/Close";
+import Dialog from "@mui/material/Dialog";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -14,6 +18,7 @@ import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import { deepPurple } from "@mui/material/colors";
 
 import { NavLink } from "react-router-dom";
+import { Divider } from "@mui/material";
 
 const pages = ["Home", "About", "Blog"];
 const settingsLogged = ["Profile", "Account", "Dashboard", "Logout"];
@@ -29,6 +34,18 @@ function ResponsiveAppBar() {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
+  const [open, setOpen] = React.useState(false);
+  let shoppingCartState = useAppSelector(
+    (state) => state.products.shoppingCart
+  );
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -164,8 +181,81 @@ function ResponsiveAppBar() {
             ))}
           </Box>
 
+          <Box style={{ marginLeft: "auto", marginRight: "10px" }}>
+            <IconButton
+              sx={{ color: deepPurple[50] }}
+              aria-label="add to the shopping cart"
+              onClick={handleClickOpen}
+            >
+              <ShoppingCartIcon />
+            </IconButton>
+          </Box>
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <div
+              className="modal-content"
+              style={{ backgroundColor: "#FFFFFF", color: "#221f1f" }}
+            >
+              <div
+                className="modal-header"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "15px",
+                  borderBottom: "1px solid #e9e9e9",
+                }}
+              >
+                <h1 id="alert-dialog-title" style={{ margin: 0, fontSize: 20 }}>
+                  Shop Cart
+                </h1>
+                <IconButton
+                  sx={{
+                    color: deepPurple[500],
+                    "&:hover": { background: deepPurple[50], color: "red" },
+                  }}
+                  aria-label="close modal"
+                  onClick={handleClose}
+                >
+                  <CloseIcon />
+                </IconButton>
+              </div>
+
+              {shoppingCartState?.map((product) => (
+                <div
+                  className="cart-item"
+                  key={product.id}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    padding: 15,
+                    borderBottom: "1px solid #e9e9e9",
+                  }}
+                >
+                  <img
+                    style={{ marginRight: 10 }}
+                    src={product.image}
+                    alt={product.title}
+                    width={50}
+                    height={50}
+                  />
+                  <h2
+                    id="alert-dialog-description"
+                    style={{ margin: 0, fontSize: 16 }}
+                  >
+                    {product.description}
+                  </h2>
+                </div>
+              ))}
+            </div>
+          </Dialog>
+
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
+            <Tooltip title="Open settings" arrow>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="Vlad" src="/avatar.jpg" />
               </IconButton>

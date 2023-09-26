@@ -1,3 +1,4 @@
+import { useSelector } from "react-redux";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import { IProduct } from "../../models";
@@ -5,6 +6,7 @@ import { IProduct } from "../../models";
 const initialState = {
   products: [] as IProduct[],
   singleProduct: {} as IProduct,
+  shoppingCart: [] as IProduct[],
   status: "" as string,
   status2: "" as string,
   errorLoading: "" as any,
@@ -16,7 +18,7 @@ export const fetchProducts = createAsyncThunk(
   async (_, { rejectWithValue, dispatch }) => {
     try {
       const response = await axios.get<IProduct[]>(
-        "https://fakestoreapi.com/products?limit=5"
+        "https://fakestoreapi.com/products?limit=15"
       );
       if (response.status < 200 || response.status >= 300) {
         throw new Error("Server Error!");
@@ -58,6 +60,15 @@ const productsSlice = createSlice({
   reducers: {
     addSelect(state, action: PayloadAction<string>) {
       state.select = action.payload;
+    },
+    addProductToCart(state, action: PayloadAction<IProduct>) {
+      if (
+        state.shoppingCart.findIndex(
+          (prod) => prod.id === action.payload.id
+        ) === -1
+      ) {
+        state.shoppingCart.push(action.payload);
+      }
     },
     // addProducts(state, action: PayloadAction<IProduct[]>) {
     //   state = action.payload;
@@ -105,5 +116,5 @@ const productsSlice = createSlice({
   },
 });
 
-export const { addSelect } = productsSlice.actions;
+export const { addSelect, addProductToCart } = productsSlice.actions;
 export default productsSlice.reducer;

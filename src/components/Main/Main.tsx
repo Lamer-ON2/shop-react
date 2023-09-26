@@ -23,6 +23,8 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Tooltip from "@mui/material/Tooltip";
 import Zoom from "@mui/material/Zoom";
 
+import Skeleton from "@mui/material/Skeleton";
+
 import DragIndicatorSharpIcon from "@mui/icons-material/DragIndicatorSharp";
 import AppsSharpIcon from "@mui/icons-material/AppsSharp";
 import { FABToTopButton } from "../UI/Buttons/FABToTopButton/FABToTopButton";
@@ -30,8 +32,11 @@ import { deepPurple } from "@mui/material/colors";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { fetchProducts } from "../../features/products/productsSlice";
+import { product as skeletonProduct } from "../../data/products";
 
 function Main() {
+  console.log(useAppSelector((state) => state.products.shoppingCart));
+
   const dispatch = useAppDispatch();
   const { status, errorLoading } = useAppSelector((state) => state.products);
 
@@ -40,6 +45,8 @@ function Main() {
 
   const [select, setSelect] = useState(selectState);
   const [view, setView] = React.useState("viewMore");
+
+  let skeletonArr = Array(20).fill(0);
 
   const handleChangeSelect = (event: SelectChangeEvent) => {
     setSelect(event.target.value as string);
@@ -174,10 +181,10 @@ function Main() {
                 width: 40,
                 height: 40,
                 color: deepPurple[900],
-                backgroundColor: deepPurple[50],
+                backgroundColor: deepPurple[100],
                 transition: "0.2s",
                 "&:hover": {
-                  backgroundColor: deepPurple[100],
+                  backgroundColor: deepPurple[50],
                 },
                 "&[aria-pressed='true']": {
                   color: deepPurple[50],
@@ -213,10 +220,10 @@ function Main() {
                 width: 40,
                 height: 40,
                 color: deepPurple[900],
-                backgroundColor: deepPurple[50],
+                backgroundColor: deepPurple[100],
                 transition: "0.2s",
                 "&:hover": {
-                  backgroundColor: deepPurple[100],
+                  backgroundColor: deepPurple[50],
                 },
                 "&[aria-pressed='true']": {
                   color: deepPurple[50],
@@ -255,31 +262,35 @@ function Main() {
       >
         {
           <ul className="card-list">
-            {status === "loading" && (
+            {status === "loading" ? (
               <div
                 style={{
-                  width: "100%",
-                  position: "absolute",
-                  zIndex: 2,
                   display: "flex",
+                  flexWrap: "wrap",
+                  gap: "12px 10px",
                   justifyContent: "center",
                 }}
               >
-                <SpinnerCircular
-                  color={"green"}
-                  secondaryColor={"grey"}
-                  size={80}
-                  thickness={120}
-                  speed={120}
-                />
+                {skeletonArr.map((_, i) => (
+                  <Skeleton
+                    component="div"
+                    variant="rounded"
+                    animation="wave"
+                    key={"skeleton-" + i}
+                    // width={180}
+                    // height={300}
+                  >
+                    <Product product={skeletonProduct} view={view} />
+                  </Skeleton>
+                ))}
               </div>
-            )}
-            {errorLoading && <ErrorMessage error={errorLoading} />}
-            {!!searchProducts.length &&
+            ) : (
+              !!searchProducts.length &&
               status === "resolved" &&
               searchProducts.map((product) => (
                 <Product product={product} view={view} key={product.id} />
-              ))}
+              ))
+            )}
           </ul>
         }
       </div>

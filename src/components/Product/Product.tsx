@@ -1,7 +1,13 @@
 import { useState } from "react";
+import { useAppDispatch } from "../../app/hooks";
 import { IProduct } from "../../models";
 import "./Product.scss";
+
+import { addProductToCart } from "../../features/products/productsSlice";
 import { Link } from "react-router-dom";
+import IconButton from "@mui/material/IconButton";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { deepPurple } from "@mui/material/colors";
 
 interface IProductProps {
   product: IProduct;
@@ -9,37 +15,47 @@ interface IProductProps {
 }
 
 export function Product({ product, view }: IProductProps): JSX.Element {
-  // const [showDetails, setShowDetails] = useState(false);
-  // const btnBgClassName = showDetails ? "" : "hide";
-  // const btnClasses = ["details", btnBgClassName];
-
-  // const [cardStyle, setCardStyle] = useState(false);
-  // const cardStyleClassName = cardStyle ? "" : "hide";
+  const dispatch = useAppDispatch();
 
   const CardWidthStyleClassName = view === "viewMore" ? "viewMore" : "viewLess";
 
   const cardClasses = ["card", CardWidthStyleClassName];
 
-  // const handleShowDetails = () => {
-  //   // setShowDetails(!showDetails);
-  //   setShowDetails((prev) => !prev);
-  //   setCardStyle((prev) => !prev);
-  // };
+  const handleAddToCart = () => {
+    // setShowDetails((prev) => !prev);
+    // setCardStyle((prev) => !prev);
+  };
   return (
     // <div className="card">
     <li className={cardClasses.join(" ")}>
       <Link key={product.id} to={`/product/${product.id}`}></Link>
       <img src={product.image} alt={product.title} width={100} height={100} />
-      <p>{product.title}</p>
-      <strong className="price">
-        <span>$</span>
-        {product.price}
-      </strong>
-
+      <p className="product-title">{product.title}</p>
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginTop: "auto",
+        }}
+      >
+        <strong className="price">
+          <span>$</span>
+          {product.price}
+        </strong>
+        <IconButton
+          sx={{ color: deepPurple[900] }}
+          aria-label="add to the shopping cart"
+          onClick={() => dispatch(addProductToCart(product))}
+        >
+          <ShoppingCartIcon />
+        </IconButton>
+      </div>
       <div className="hidden-details">
         <div className="hidden-details__content">
           <div>
-            <p style={{ marginTop: 0 }}>{product.description}</p>
+            <p className="description">{product.description}</p>
             <p>
               Rate:
               <span style={{ fontWeight: "bold", marginLeft: 5 }}>
