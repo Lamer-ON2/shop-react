@@ -4,7 +4,13 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { IProduct } from "../../models";
 
 import "./SingleProduct.scss";
-import { fetchSingleProduct } from "../../features/products/productsSlice";
+import {
+  fetchSingleProduct,
+  addProductToCart,
+} from "../../features/products/productsSlice";
+import IconButton from "@mui/material/IconButton";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { deepPurple } from "@mui/material/colors";
 
 export const SingleProduct = () => {
   const dispatch = useAppDispatch();
@@ -31,10 +37,25 @@ export const SingleProduct = () => {
             <p>
               <b>Category:</b> {productState?.category}
             </p>
-            <strong className="price">
-              <span>$</span>
-              {productState?.price}
-            </strong>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <strong className="price">
+                <span>$</span>
+                {productState?.price}
+              </strong>
+              <IconButton
+                sx={{ color: deepPurple[900], marginLeft: "15px" }}
+                aria-label="add to the shopping cart"
+                onClick={() => dispatch(addProductToCart(productState))}
+              >
+                <ShoppingCartIcon />
+              </IconButton>
+            </div>
             <div>
               <p>{productState?.description}</p>
               <p>

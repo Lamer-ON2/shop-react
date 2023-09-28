@@ -14,9 +14,7 @@ import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 //end select
 
-// TextField;
 import TextField from "@mui/material/TextField";
-// end TextField
 
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
@@ -34,37 +32,27 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { fetchProducts } from "../../features/products/productsSlice";
 import { product as skeletonProduct } from "../../data/products";
 
+import Pagination from "@mui/material/Pagination";
+
 function Main() {
-  console.log(useAppSelector((state) => state.products.shoppingCart));
-
   const dispatch = useAppDispatch();
-  const { status, errorLoading } = useAppSelector((state) => state.products);
-
+  const skeletonArr = Array(20).fill(0);
   let productsState = useAppSelector((state) => state.products.products);
   let selectState = useAppSelector((state) => state.products.select);
+  const { status, errorLoading } = useAppSelector((state) => state.products);
 
   const [select, setSelect] = useState(selectState);
   const [view, setView] = React.useState("viewMore");
 
-  let skeletonArr = Array(20).fill(0);
-
-  const handleChangeSelect = (event: SelectChangeEvent) => {
-    setSelect(event.target.value as string);
-    sortByProducts(searchProducts, event.target.value);
-    dispatch(addSelect(event.target.value));
-  };
-
-  const handleChangeView = (
-    event: React.MouseEvent<HTMLElement>,
-    nextView: string
-  ) => {
-    if (nextView !== null) {
-      setView(nextView);
-    }
-  };
-
   const [search, setSearch] = useState<string>("");
-  const [searchProducts, setSearchProducts] = useState<IProduct[]>([]);
+  const [productsData, setProductsData] = useState<IProduct[]>([]);
+  // ================================
+  const elementsPerPage = 10;
+  const [page, setPage] = React.useState(1);
+  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+    // console.log("value", value);
+  };
 
   useEffect(() => {
     if (!productsState.length) {
@@ -79,9 +67,24 @@ function Main() {
 
   useEffect(() => {
     const filteredCardsTitles = searchFilter(productsState, search);
-    setSearchProducts(filteredCardsTitles);
+    setProductsData(filteredCardsTitles);
     sortByProducts(filteredCardsTitles, select);
   }, [search, select, productsState]);
+
+  const handleChangeSelect = (event: SelectChangeEvent) => {
+    setSelect(event.target.value as string);
+    sortByProducts(productsData, event.target.value);
+    dispatch(addSelect(event.target.value));
+  };
+
+  const handleChangeView = (
+    event: React.MouseEvent<HTMLElement>,
+    nextView: string
+  ) => {
+    if (nextView !== null) {
+      setView(nextView);
+    }
+  };
 
   function sortByProducts(arr: IProduct[], value: string) {
     const tmpProducts = JSON.parse(JSON.stringify(arr));
@@ -99,14 +102,19 @@ function Main() {
         a.price > b.price ? 1 : -1
       );
     }
-    setSearchProducts(tmpProducts);
+    setProductsData(tmpProducts);
   }
 
   function searchFilter(arr: IProduct[], searchText: string) {
     if (!searchText.trim()) {
+      setProductsData(arr);
       return arr;
     }
     return arr.filter(({ title }: IProduct) => {
+      setProductsData(arr);
+      setPage(1);
+
+      console.log("page", page);
       return title.toLowerCase().includes(searchText.toLowerCase());
     });
   }
@@ -148,9 +156,9 @@ function Main() {
               marginBottom: "10px",
             }}
             id="outlined-search"
-            error={!searchProducts.toString() && !!search}
+            error={!productsData.toString() && !!search}
             helperText={
-              !searchProducts.toString() && !!search ? "No results" : null
+              !productsData.toString() && !!search ? "No results" : null
             }
             label="Search"
             type="search"
@@ -181,10 +189,10 @@ function Main() {
                 width: 40,
                 height: 40,
                 color: deepPurple[900],
-                backgroundColor: deepPurple[100],
+                backgroundColor: deepPurple[50],
                 transition: "0.2s",
                 "&:hover": {
-                  backgroundColor: deepPurple[50],
+                  backgroundColor: deepPurple[100],
                 },
                 "&[aria-pressed='true']": {
                   color: deepPurple[50],
@@ -220,10 +228,10 @@ function Main() {
                 width: 40,
                 height: 40,
                 color: deepPurple[900],
-                backgroundColor: deepPurple[100],
+                backgroundColor: deepPurple[50],
                 transition: "0.2s",
                 "&:hover": {
-                  backgroundColor: deepPurple[50],
+                  backgroundColor: deepPurple[100],
                 },
                 "&[aria-pressed='true']": {
                   color: deepPurple[50],
@@ -277,24 +285,34 @@ function Main() {
                     variant="rounded"
                     animation="wave"
                     key={"skeleton-" + i}
-                    // width={180}
-                    // height={300}
                   >
                     <Product product={skeletonProduct} view={view} />
                   </Skeleton>
                 ))}
               </div>
             ) : (
-              !!searchProducts.length &&
+              !!productsData.length &&
               status === "resolved" &&
-              searchProducts.map((product) => (
-                <Product product={product} view={view} key={product.id} />
-              ))
+              productsData.map(
+                (product, idx) =>
+                  idx >= page * elementsPerPage - elementsPerPage &&
+                  idx < page * elementsPerPage && (
+                    <Product product={product} view={view} key={product.id} />
+                  )
+              )
             )}
           </ul>
         }
       </div>
       <FABToTopButton />
+      {productsData.length > elementsPerPage && (
+        <Pagination
+          sx={{ width: "fit-content", margin: "20px auto" }}
+          count={Math.ceil(productsData.length / elementsPerPage)}
+          page={page}
+          onChange={handleChange}
+        />
+      )}
     </div>
   );
 }

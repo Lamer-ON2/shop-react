@@ -4,8 +4,10 @@ import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import CloseIcon from "@mui/icons-material/Close";
+import CartEmpty from "./../../img/modal-cart-empty.svg";
 import Dialog from "@mui/material/Dialog";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
@@ -19,12 +21,17 @@ import { deepPurple } from "@mui/material/colors";
 
 import { NavLink } from "react-router-dom";
 import { Divider } from "@mui/material";
+import {
+  addProductToCart,
+  deleteProductFromCart,
+} from "../../features/products/productsSlice";
 
 const pages = ["Home", "About", "Blog"];
 const settingsLogged = ["Profile", "Account", "Dashboard", "Logout"];
 const settingsNotLogged = ["Login"];
 
 function ResponsiveAppBar() {
+  const dispatch = useAppDispatch();
   const [isLogged, setIsLogged] = React.useState<boolean>(true);
   const settings = isLogged ? settingsLogged : settingsNotLogged;
 
@@ -191,66 +198,150 @@ function ResponsiveAppBar() {
             </IconButton>
           </Box>
           <Dialog
+            sx={{
+              overflow: "hidden",
+              "& .MuiPaper-root": { width: "100%" },
+            }}
+            maxWidth="lg"
             open={open}
             onClose={handleClose}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
             <div
-              className="modal-content"
-              style={{ backgroundColor: "#FFFFFF", color: "#221f1f" }}
+              className="modal-header"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "15px",
+                background: deepPurple[600],
+              }}
             >
-              <div
-                className="modal-header"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "15px",
-                  borderBottom: "1px solid #e9e9e9",
+              <h1 id="alert-dialog-title" style={{ margin: 0, fontSize: 20 }}>
+                Shop Cart
+              </h1>
+              <IconButton
+                sx={{
+                  color: deepPurple[50],
+                  "&:hover": {
+                    background: deepPurple[50],
+                    color: deepPurple[800],
+                    // color: (theme) => theme.palette.grey[900],
+                  },
                 }}
+                aria-label="close modal"
+                onClick={handleClose}
               >
-                <h1 id="alert-dialog-title" style={{ margin: 0, fontSize: 20 }}>
-                  Shop Cart
-                </h1>
-                <IconButton
-                  sx={{
-                    color: deepPurple[500],
-                    "&:hover": { background: deepPurple[50], color: "red" },
-                  }}
-                  aria-label="close modal"
-                  onClick={handleClose}
-                >
-                  <CloseIcon />
-                </IconButton>
-              </div>
+                <CloseIcon />
+              </IconButton>
+            </div>
+            <div
+              className="modal-content"
+              style={{
+                overflowY: "auto",
+                backgroundColor: "#FFFFFF",
+                color: "#221f1f",
+              }}
+            >
+              {shoppingCartState.length ? (
+                shoppingCartState?.map((product) => (
+                  <div
+                    className="cart-item"
+                    key={product.id}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      padding: 15,
+                      borderBottom: "2px solid #e9e9e9",
+                    }}
+                  >
+                    <img
+                      style={{
+                        maxWidth: 50,
+                        marginRight: 10,
+                        flex: "1 0 auto",
+                        objectFit: "contain",
+                      }}
+                      src={product.image}
+                      alt={product.title}
+                      width={50}
+                      height={50}
+                    />
+                    <Divider
+                      orientation="vertical"
+                      flexItem
+                      sx={{
+                        borderWidth: 1,
+                        borderColor: "#e9e9e9",
+                        marginRight: "10px",
+                      }}
+                    />
+                    <h2
+                      id="alert-dialog-description"
+                      style={{
+                        width: "100%",
+                        margin: 0,
+                        paddingRight: "10px",
+                        fontSize: 16,
+                        borderRight: "2px solid #e9e9e9",
+                      }}
+                    >
+                      {product.description}
+                    </h2>
+                    <strong
+                      className="price"
+                      style={{
+                        minWidth: "45px",
+                        margin: "0 10px",
+                      }}
+                    >
+                      <span>$</span>
+                      {product.price}
+                    </strong>
 
-              {shoppingCartState?.map((product) => (
+                    <IconButton
+                      sx={{
+                        padding: "8px",
+                        marginLeft: "auto",
+                        color: deepPurple[50],
+                        "&:hover": {
+                          background: deepPurple[50],
+                          color: deepPurple[800],
+                        },
+                      }}
+                      // size="medium"
+                      aria-label="close modal"
+                      onClick={() => dispatch(deleteProductFromCart(product))}
+                    >
+                      <DeleteForeverIcon fontSize="medium" color="error" />
+                    </IconButton>
+                  </div>
+                ))
+              ) : (
                 <div
-                  className="cart-item"
-                  key={product.id}
                   style={{
+                    padding: "30px 15px",
                     display: "flex",
+                    flexDirection: "column",
                     alignItems: "center",
-                    padding: 15,
-                    borderBottom: "1px solid #e9e9e9",
                   }}
                 >
                   <img
-                    style={{ marginRight: 10 }}
-                    src={product.image}
-                    alt={product.title}
-                    width={50}
-                    height={50}
+                    style={{
+                      display: "block",
+                      margin: "0px auto 20px",
+                      objectFit: "contain",
+                    }}
+                    src={CartEmpty}
+                    alt={"shoping cart empty"}
+                    width={200}
+                    height={200}
                   />
-                  <h2
-                    id="alert-dialog-description"
-                    style={{ margin: 0, fontSize: 16 }}
-                  >
-                    {product.description}
-                  </h2>
+                  <b>Cart is empty</b>
+                  <span>But it's never too late to fix it :)</span>
                 </div>
-              ))}
+              )}
             </div>
           </Dialog>
 
