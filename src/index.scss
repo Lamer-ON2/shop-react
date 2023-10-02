@@ -52,8 +52,19 @@ select:focus-visible {
 .card-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px 10px;
-  justify-content: center;
+  /* gap: 12px 10px; */
+  gap: 12px 3%;
+  justify-content: start;
+
+  @media (min-width: 576px) {
+    gap: 12px 1.8%;
+  }
+  @media (min-width: 768px) {
+    gap: 12px 1.7%;
+  }
+  @media (min-width: 992px) {
+    gap: 12px 1.1%;
+  }
 }
 
 /* .catalog-buttons {

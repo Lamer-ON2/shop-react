@@ -36,7 +36,6 @@ import Pagination from "@mui/material/Pagination";
 
 function Main() {
   const dispatch = useAppDispatch();
-  const skeletonArr = Array(20).fill(0);
   let productsState = useAppSelector((state) => state.products.products);
   let selectState = useAppSelector((state) => state.products.select);
   const { status, errorLoading } = useAppSelector((state) => state.products);
@@ -46,12 +45,12 @@ function Main() {
 
   const [search, setSearch] = useState<string>("");
   const [productsData, setProductsData] = useState<IProduct[]>([]);
-  // ================================
-  const elementsPerPage = 10;
+
+  const elementsPerPage = 12;
+  const skeletonArr = Array(elementsPerPage).fill(0);
   const [page, setPage] = React.useState(1);
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
-    // console.log("value", value);
   };
 
   useEffect(() => {

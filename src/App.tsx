@@ -1,4 +1,5 @@
-import "./App.css";
+// import "./App.scss";
+
 // import { useEffect, useState } from "react";
 // import { SpinnerCircular } from "spinners-react";
 // import { ErrorMessage } from "./components/ErrorMessage/ErrorMessage";

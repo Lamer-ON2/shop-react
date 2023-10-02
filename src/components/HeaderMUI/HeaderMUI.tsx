@@ -1,3 +1,4 @@
+import "./HeaderMUI.scss";
 import * as React from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import AppBar from "@mui/material/AppBar";
@@ -12,7 +13,6 @@ import Dialog from "@mui/material/Dialog";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
@@ -70,9 +70,8 @@ function ResponsiveAppBar() {
   };
 
   return (
-    // <AppBar position="fixed" style={{ background: "#3e77aa" }}>
     <AppBar position="fixed" style={{ background: deepPurple[900] }}>
-      <Container maxWidth="xl">
+      <div className="container">
         <Toolbar
           disableGutters
           sx={{ display: "flex", justifyContent: "space-between" }}
@@ -83,8 +82,6 @@ function ResponsiveAppBar() {
           <Typography
             variant="h6"
             noWrap
-            // component="a"
-            // href="/"
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
@@ -156,8 +153,6 @@ function ResponsiveAppBar() {
             <Typography
               variant="h5"
               noWrap
-              // component="a"
-              // href="/"
               component={NavLink}
               to="/"
               sx={{
@@ -177,11 +172,14 @@ function ResponsiveAppBar() {
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <NavLink
-                key={page}
+                key={page + "md"}
                 onClick={handleCloseNavMenu}
-                // sx={{ my: 2, color: "white", display: "block" }}
                 to={page === "Home" ? "/" : `${page.toLowerCase()}`}
-                style={{ margin: "0 15px", color: "inherit", display: "block" }}
+                style={{
+                  margin: "0 15px",
+                  color: "inherit",
+                  display: "block",
+                }}
               >
                 {page}
               </NavLink>
@@ -198,9 +196,10 @@ function ResponsiveAppBar() {
             </IconButton>
           </Box>
           <Dialog
+            id="cart-modal"
             sx={{
               overflow: "hidden",
-              "& .MuiPaper-root": { width: "100%" },
+              "& .MuiPaper-root": { width: "100%", margin: "32px auto" },
             }}
             maxWidth="lg"
             open={open}
@@ -310,7 +309,6 @@ function ResponsiveAppBar() {
                           color: deepPurple[800],
                         },
                       }}
-                      // size="medium"
                       aria-label="close modal"
                       onClick={() => dispatch(deleteProductFromCart(product))}
                     >
@@ -375,7 +373,7 @@ function ResponsiveAppBar() {
             </Menu>
           </Box>
         </Toolbar>
-      </Container>
+      </div>
     </AppBar>
   );
 }

@@ -38,7 +38,7 @@ export const fetchSingleProduct = createAsyncThunk(
   async (data: { id: string | undefined }, { rejectWithValue, dispatch }) => {
     try {
       const response = await axios.get<IProduct>(
-        `https://fakestoreapi.com/products/${data?.id || {}}?limit=1`
+        `https://fakestoreapi.com/products/${data?.id}?limit=1`
       );
       if (response.status < 200 || response.status >= 300) {
         throw new Error("Server Error!");
@@ -61,14 +61,26 @@ const productsSlice = createSlice({
     addSelect(state, action: PayloadAction<string>) {
       state.select = action.payload;
     },
-    addProductToCart(state, action: PayloadAction<IProduct>) {
-      if (
-        state.shoppingCart.findIndex(
-          (prod) => prod.id === action.payload.id
-        ) === -1
-      ) {
-        state.shoppingCart.push(action.payload);
-      }
+    addProductToCart(state, action: PayloadAction<number>) {
+      // let product = {} || undefined;
+      // console.log(typeof action.payload);
+
+      let product = state.shoppingCart.find(
+        (prod) => prod.id === action.payload
+      );
+      product === undefined
+        ? state.shoppingCart.push(
+            state.products.find((p) => p.id === action.payload) ||
+              ({} as IProduct)
+          )
+        : console.log("false");
+
+      // if (
+      //   state.shoppingCart.find((prod) => prod.id === action.payload) === undefined
+      // ) {
+      //   product = state.shoppingCart.find((prod) => prod.id === action.payload);
+      //   state.shoppingCart.push(product);
+      // }
     },
     deleteProductFromCart(state, action: PayloadAction<IProduct>) {
       state.shoppingCart = state.shoppingCart.filter(

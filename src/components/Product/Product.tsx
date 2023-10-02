@@ -47,7 +47,7 @@ export function Product({ product, view }: IProductProps): JSX.Element {
         <IconButton
           sx={{ color: deepPurple[900] }}
           aria-label="add to the shopping cart"
-          onClick={() => dispatch(addProductToCart(product))}
+          onClick={() => dispatch(addProductToCart(product.id))}
         >
           <ShoppingCartIcon />
         </IconButton>
