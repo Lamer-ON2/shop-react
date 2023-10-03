@@ -18,10 +18,10 @@ export const SingleProduct = () => {
   let productState = useAppSelector((state) => state.products.singleProduct);
   let maintState = useAppSelector((state) => state.products.products);
   const { id } = useParams();
-  console.log("productState.id", productState.id);
-  console.log("productState", productState);
-  console.log("id", id);
-  console.log("maintState", maintState);
+  // console.log("productState.id", productState.id);
+  // console.log("productState", productState);
+  // console.log("id", id);
+  // console.log("maintState", maintState);
 
   useEffect(() => {
     dispatch(fetchSingleProduct({ id }));

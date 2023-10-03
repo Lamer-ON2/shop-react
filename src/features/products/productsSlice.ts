@@ -62,31 +62,65 @@ const productsSlice = createSlice({
       state.select = action.payload;
     },
     addProductToCart(state, action: PayloadAction<number>) {
-      // let product = {} || undefined;
-      // console.log(typeof action.payload);
+      let arrForStorage = [];
+      let productsStorage = JSON.parse(
+        localStorage.getItem("products") || "{}"
+      );
+      if (!localStorage.getItem("cart")) {
+        arrForStorage.push(
+          productsStorage.find((prod: IProduct) => prod.id === action.payload)
+        );
+        localStorage.setItem("cart", JSON.stringify(arrForStorage));
+        console.log("! local");
+      } else {
+        arrForStorage = JSON.parse(localStorage.getItem("cart") || "{}");
+
+        let productCheck = arrForStorage.find(
+          (prod: IProduct) => prod.id === action.payload
+        );
+
+        productCheck === undefined
+          ? arrForStorage.push(
+              productsStorage.find(
+                (prod: IProduct) => prod.id === action.payload
+              )
+            )
+          : console.log("false");
+        // localStorage.removeItem("cart");
+        localStorage.setItem("cart", JSON.stringify(arrForStorage));
+      }
+
+      // ++++++++++++++++++++++++++++++++++++++
 
       let product = state.shoppingCart.find(
         (prod) => prod.id === action.payload
       );
+
       product === undefined
         ? state.shoppingCart.push(
             state.products.find((p) => p.id === action.payload) ||
               ({} as IProduct)
           )
         : console.log("false");
-
-      // if (
-      //   state.shoppingCart.find((prod) => prod.id === action.payload) === undefined
-      // ) {
-      //   product = state.shoppingCart.find((prod) => prod.id === action.payload);
-      //   state.shoppingCart.push(product);
-      // }
     },
-    deleteProductFromCart(state, action: PayloadAction<IProduct>) {
+    deleteProductFromCart(state, action: PayloadAction<number>) {
+      let productsStorage = JSON.parse(localStorage.getItem("cart") || "{}");
+
+      localStorage.setItem(
+        "cart",
+        JSON.stringify(
+          productsStorage.filter((prod: IProduct) => prod.id !== action.payload)
+        )
+      );
       state.shoppingCart = state.shoppingCart.filter(
-        (prod) => prod.id !== action.payload.id
+        (prod) => prod.id !== action.payload
       );
     },
+    // deleteProductFromCart(state, action: PayloadAction<IProduct>) {
+    //   state.shoppingCart = state.shoppingCart.filter(
+    //     (prod) => prod.id !== action.payload.id
+    //   );
+    // },
   },
 
   extraReducers: (builder) => {
@@ -100,6 +134,26 @@ const productsSlice = createSlice({
       // console.log("fulfilled");
       state.status = "resolved";
       state.products = action.payload;
+
+      localStorage.removeItem("products");
+
+      if (!localStorage.getItem("products")) {
+        localStorage.setItem("products", JSON.stringify(action.payload));
+        // console.log(
+        //   "setItem",
+        //   typeof JSON.parse(localStorage.getItem("products") || "{}")
+        // );
+        // console.log(
+        //   "obj",
+        //   JSON.parse(localStorage.getItem("products") || "{}")
+        // );
+      } else {
+        // console.log(
+        //   "full-storage",
+        //   JSON.parse(localStorage.getItem("products") || "{}")
+        // );
+        // localStorage.removeItem("products");
+      }
       // localStorage.setItem("storageProducts", JSON.stringify(action.payload));
     });
 

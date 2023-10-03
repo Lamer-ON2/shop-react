@@ -1,5 +1,6 @@
 import "./HeaderMUI.scss";
 import * as React from "react";
+import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -25,6 +26,7 @@ import {
   addProductToCart,
   deleteProductFromCart,
 } from "../../features/products/productsSlice";
+import { IProduct } from "../../models";
 
 const pages = ["Home", "About", "Blog"];
 const settingsLogged = ["Profile", "Account", "Dashboard", "Logout"];
@@ -42,8 +44,17 @@ function ResponsiveAppBar() {
     null
   );
   const [open, setOpen] = React.useState(false);
-  let shoppingCartState = useAppSelector(
-    (state) => state.products.shoppingCart
+  // let shoppingCartState = useAppSelector(
+  //   (state) => state.products.shoppingCart
+  // );
+  let cartState = useAppSelector((state) => state.products.shoppingCart);
+
+  useEffect(() => {
+    console.log("cartState");
+  }, [cartState]);
+
+  let shoppingCartState: IProduct[] = JSON.parse(
+    localStorage.getItem("cart") || "{}"
   );
 
   const handleClickOpen = () => {
@@ -244,7 +255,7 @@ function ResponsiveAppBar() {
               }}
             >
               {shoppingCartState.length ? (
-                shoppingCartState?.map((product) => (
+                shoppingCartState?.map((product: IProduct) => (
                   <div
                     className="cart-item"
                     key={product.id}
@@ -276,18 +287,34 @@ function ResponsiveAppBar() {
                         marginRight: "10px",
                       }}
                     />
-                    <h2
-                      id="alert-dialog-description"
+                    <div
                       style={{
                         width: "100%",
-                        margin: 0,
                         paddingRight: "10px",
-                        fontSize: 16,
                         borderRight: "2px solid #e9e9e9",
                       }}
                     >
-                      {product.description}
-                    </h2>
+                      <h2
+                        id="alert-dialog-description"
+                        style={{
+                          width: "100%",
+                          margin: 0,
+                          fontSize: 18,
+                        }}
+                      >
+                        {product.title}
+                      </h2>
+                      <p
+                        id="alert-dialog-description"
+                        style={{
+                          width: "100%",
+                          margin: 0,
+                          fontSize: 16,
+                        }}
+                      >
+                        {product.description}
+                      </p>
+                    </div>
                     <strong
                       className="price"
                       style={{
@@ -310,7 +337,9 @@ function ResponsiveAppBar() {
                         },
                       }}
                       aria-label="close modal"
-                      onClick={() => dispatch(deleteProductFromCart(product))}
+                      onClick={() =>
+                        dispatch(deleteProductFromCart(product.id))
+                      }
                     >
                       <DeleteForeverIcon fontSize="medium" color="error" />
                     </IconButton>

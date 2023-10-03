@@ -37,6 +37,9 @@ import Pagination from "@mui/material/Pagination";
 function Main() {
   const dispatch = useAppDispatch();
   let productsState = useAppSelector((state) => state.products.products);
+  let storageState = JSON.parse(localStorage.getItem("products") || "{}");
+  // console.log("storageState", productsState);
+
   let selectState = useAppSelector((state) => state.products.select);
   const { status, errorLoading } = useAppSelector((state) => state.products);
 
@@ -290,10 +293,11 @@ function Main() {
                 ))}
               </div>
             ) : (
-              !!productsData.length &&
-              status === "resolved" &&
-              productsData.map(
-                (product, idx) =>
+              // !!productsData.length &&
+              // status === "resolved" &&
+              // productsData.map(
+              storageState?.map(
+                (product: IProduct, idx: number) =>
                   idx >= page * elementsPerPage - elementsPerPage &&
                   idx < page * elementsPerPage && (
                     <Product product={product} view={view} key={product.id} />
