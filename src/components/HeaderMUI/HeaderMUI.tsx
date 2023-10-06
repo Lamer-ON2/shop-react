@@ -108,7 +108,6 @@ function ResponsiveAppBar() {
             </NavLink>
           </Typography>
 
-          {/* <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}> */}
           <Box sx={{ flexGrow: 0, display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
@@ -156,7 +155,6 @@ function ResponsiveAppBar() {
               ))}
             </Menu>
           </Box>
-          {/* box tmp */}
           <Box sx={{ flexGrow: 0, display: "flex", alignItems: "center" }}>
             <MonetizationOnIcon
               sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
