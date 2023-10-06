@@ -6,6 +6,7 @@ const initialState = {
   products: [] as IProduct[],
   singleProduct: {} as IProduct,
   shoppingCart: [] as IProduct[],
+  shoppingCartModal: false as boolean,
   status: "" as string,
   status2: "" as string,
   errorLoading: "" as any,
@@ -86,11 +87,8 @@ const productsSlice = createSlice({
               )
             )
           : console.log("false");
-        // localStorage.removeItem("cart");
         localStorage.setItem("cart", JSON.stringify(arrForStorage));
       }
-
-      // ++++++++++++++++++++++++++++++++++++++
 
       let product = state.shoppingCart.find(
         (prod) => prod.id === action.payload
@@ -116,11 +114,9 @@ const productsSlice = createSlice({
         (prod) => prod.id !== action.payload
       );
     },
-    // deleteProductFromCart(state, action: PayloadAction<IProduct>) {
-    //   state.shoppingCart = state.shoppingCart.filter(
-    //     (prod) => prod.id !== action.payload.id
-    //   );
-    // },
+    toggleCartModal(state) {
+      state.shoppingCartModal = !state.shoppingCartModal;
+    },
   },
 
   extraReducers: (builder) => {
@@ -135,26 +131,14 @@ const productsSlice = createSlice({
       state.status = "resolved";
       state.products = action.payload;
 
-      localStorage.removeItem("products");
+      // localStorage.removeItem("products");
 
       if (!localStorage.getItem("products")) {
         localStorage.setItem("products", JSON.stringify(action.payload));
-        // console.log(
-        //   "setItem",
-        //   typeof JSON.parse(localStorage.getItem("products") || "{}")
-        // );
-        // console.log(
-        //   "obj",
-        //   JSON.parse(localStorage.getItem("products") || "{}")
-        // );
-      } else {
-        // console.log(
-        //   "full-storage",
-        //   JSON.parse(localStorage.getItem("products") || "{}")
-        // );
-        // localStorage.removeItem("products");
       }
-      // localStorage.setItem("storageProducts", JSON.stringify(action.payload));
+      if (!localStorage.getItem("cart")) {
+        localStorage.setItem("cart", JSON.stringify([]));
+      }
     });
 
     builder.addCase(fetchProducts.rejected, (state, action) => {
@@ -184,6 +168,10 @@ const productsSlice = createSlice({
   },
 });
 
-export const { addSelect, addProductToCart, deleteProductFromCart } =
-  productsSlice.actions;
+export const {
+  addSelect,
+  addProductToCart,
+  deleteProductFromCart,
+  toggleCartModal,
+} = productsSlice.actions;
 export default productsSlice.reducer;

@@ -18,10 +18,6 @@ const Header = () => {
               <li>
                 <NavLink to={"registration"}>Registration</NavLink>
               </li>
-
-              {/* <li>
-                <Button title={"Select Wallet"} />
-              </li> */}
             </ul>
           </nav>
         </div>

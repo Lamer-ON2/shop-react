@@ -1,4 +1,4 @@
-import "./HeaderMUI.scss";
+import "./headerMUI.scss";
 import * as React from "react";
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
@@ -23,13 +23,13 @@ import { deepPurple } from "@mui/material/colors";
 import { NavLink } from "react-router-dom";
 import { Divider } from "@mui/material";
 import {
-  addProductToCart,
   deleteProductFromCart,
+  toggleCartModal,
 } from "../../features/products/productsSlice";
 import { IProduct } from "../../models";
 
-const pages = ["Home", "About", "Blog"];
-const settingsLogged = ["Profile", "Account", "Dashboard", "Logout"];
+const pages = ["Home", "About"];
+const settingsLogged = ["Profile", "Account", "Logout"];
 const settingsNotLogged = ["Login"];
 
 function ResponsiveAppBar() {
@@ -43,26 +43,26 @@ function ResponsiveAppBar() {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
-  const [open, setOpen] = React.useState(false);
-  // let shoppingCartState = useAppSelector(
-  //   (state) => state.products.shoppingCart
-  // );
+  // const [open, setOpen] = React.useState(false);
+  let shoppingCartModal = useAppSelector(
+    (state) => state.products.shoppingCartModal
+  );
   let cartState = useAppSelector((state) => state.products.shoppingCart);
 
-  useEffect(() => {
-    console.log("cartState");
-  }, [cartState]);
+  useEffect(() => {}, [cartState]);
 
   let shoppingCartState: IProduct[] = JSON.parse(
     localStorage.getItem("cart") || "{}"
   );
 
   const handleClickOpen = () => {
-    setOpen(true);
+    // setOpen(true);
+    dispatch(toggleCartModal());
   };
 
   const handleClose = () => {
-    setOpen(false);
+    // setOpen(false);
+    dispatch(toggleCartModal());
   };
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -213,7 +213,8 @@ function ResponsiveAppBar() {
               "& .MuiPaper-root": { width: "100%", margin: "32px auto" },
             }}
             maxWidth="lg"
-            open={open}
+            open={shoppingCartModal}
+            // open={open}
             onClose={handleClose}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"

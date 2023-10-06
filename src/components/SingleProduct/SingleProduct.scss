@@ -11,4 +11,7 @@
 .single-card {
   max-width: none;
   box-sizing: border-box;
+  &:hover {
+    box-shadow: none;
+  }
 }

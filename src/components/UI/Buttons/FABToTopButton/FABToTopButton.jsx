@@ -31,7 +31,7 @@ export const FABToTopButton = () => {
         display: visible ? "flex" : "none",
         position: "fixed",
         right: 15,
-        bottom: 15,
+        bottom: 75,
         background: deepPurple[900],
         color: "white",
         "&:hover": { background: deepPurple[700] },

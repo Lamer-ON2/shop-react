@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import HeaderMUI from "../HeaderMUI/HeaderMUI";
-// import Footer from "../Footer/Footer";
+import Footer from "../Footer/Footer";
 
 const Root = () => {
   return (
@@ -9,7 +9,7 @@ const Root = () => {
       <main>
         <Outlet />
       </main>
-      {/* <Footer /> */}
+      <Footer />
     </div>
   );
 };

@@ -2,7 +2,7 @@ import { IProduct } from "../models";
 
 export const products: IProduct[] = [
   {
-    id: 1,
+    id: 0,
     title: "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
     price: 109.95,
     description:
@@ -14,7 +14,7 @@ export const products: IProduct[] = [
 ];
 
 export const product: IProduct = {
-  id: 1,
+  id: 0,
   title: "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
   price: 109.95,
   description:

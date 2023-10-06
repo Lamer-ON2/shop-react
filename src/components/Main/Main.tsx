@@ -1,7 +1,5 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { SpinnerCircular } from "spinners-react";
-import { ErrorMessage } from "../ErrorMessage/ErrorMessage";
 import { Product } from "../Product/Product";
 import { IProduct } from "../../models";
 
@@ -37,11 +35,11 @@ import Pagination from "@mui/material/Pagination";
 function Main() {
   const dispatch = useAppDispatch();
   let productsState = useAppSelector((state) => state.products.products);
-  let storageState = JSON.parse(localStorage.getItem("products") || "{}");
-  // console.log("storageState", productsState);
+  let storageCartState = JSON.parse(localStorage.getItem("cart") || "{}");
 
   let selectState = useAppSelector((state) => state.products.select);
-  const { status, errorLoading } = useAppSelector((state) => state.products);
+  // const { status, errorLoading } = useAppSelector((state) => state.products);
+  const { status } = useAppSelector((state) => state.products);
 
   const [select, setSelect] = useState(selectState);
   const [view, setView] = React.useState("viewMore");
@@ -49,7 +47,7 @@ function Main() {
   const [search, setSearch] = useState<string>("");
   const [productsData, setProductsData] = useState<IProduct[]>([]);
 
-  const elementsPerPage = 12;
+  const elementsPerPage = 10;
   const skeletonArr = Array(elementsPerPage).fill(0);
   const [page, setPage] = React.useState(1);
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
@@ -116,9 +114,13 @@ function Main() {
       setProductsData(arr);
       setPage(1);
 
-      console.log("page", page);
       return title.toLowerCase().includes(searchText.toLowerCase());
     });
+  }
+
+  function checkAddedItem(checkedID: number) {
+    return !!storageCartState.find((prod: IProduct) => prod.id === checkedID);
+    // return !!shoppingCartState.find((prod: IProduct) => prod.id === checkedID);
   }
 
   return (
@@ -287,20 +289,32 @@ function Main() {
                     variant="rounded"
                     animation="wave"
                     key={"skeleton-" + i}
+                    width={225}
+                    height={300}
                   >
-                    <Product product={skeletonProduct} view={view} />
+                    <Product
+                      product={skeletonProduct}
+                      view={view}
+                      checked={false}
+                    />
                   </Skeleton>
                 ))}
               </div>
             ) : (
-              // !!productsData.length &&
-              // status === "resolved" &&
-              // productsData.map(
-              storageState?.map(
+              // !!storageState.length &&
+              // !!storageCartState.length &&
+              status === "resolved" &&
+              productsData?.map(
+                // storageState?.map(
                 (product: IProduct, idx: number) =>
                   idx >= page * elementsPerPage - elementsPerPage &&
                   idx < page * elementsPerPage && (
-                    <Product product={product} view={view} key={product.id} />
+                    <Product
+                      product={product}
+                      view={view}
+                      checked={checkAddedItem(product.id)}
+                      key={product.id}
+                    />
                   )
               )
             )}
