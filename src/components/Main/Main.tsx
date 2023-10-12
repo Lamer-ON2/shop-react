@@ -22,7 +22,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { fetchProducts } from "../../features/products/productsSlice";
 import { product as skeletonProduct } from "../../data/products";
 
-import Pagination from "@mui/material/Pagination";
+import PaginationMUI from "../UI/PaginationMUI/PaginationMUI";
 import RadioButtons from "../UI/Buttons/RadioButtons/RadioButtons";
 
 function Main() {
@@ -43,7 +43,10 @@ function Main() {
   const elementsPerPage = 10;
   const skeletonArr = Array(elementsPerPage).fill(0);
   const [page, setPage] = React.useState(1);
-  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+  const handlePagination = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
     setPage(value);
   };
 
@@ -228,14 +231,13 @@ function Main() {
         }
       </div>
       <FABToTopButton />
-      {productsData.length > elementsPerPage && (
-        <Pagination
-          sx={{ width: "fit-content", margin: "20px auto" }}
-          count={Math.ceil(productsData.length / elementsPerPage)}
-          page={page}
-          onChange={handleChange}
-        />
-      )}
+
+      <PaginationMUI
+        dataLength={productsData.length}
+        elementsPerPage={elementsPerPage}
+        page={page}
+        handlePagination={handlePagination}
+      />
     </div>
   );
 }
