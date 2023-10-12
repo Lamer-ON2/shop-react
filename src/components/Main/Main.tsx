@@ -14,23 +14,16 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 
 import TextField from "@mui/material/TextField";
 
-import ToggleButton from "@mui/material/ToggleButton";
-import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import Tooltip from "@mui/material/Tooltip";
-import Zoom from "@mui/material/Zoom";
-
 import Skeleton from "@mui/material/Skeleton";
 
-import DragIndicatorSharpIcon from "@mui/icons-material/DragIndicatorSharp";
-import AppsSharpIcon from "@mui/icons-material/AppsSharp";
 import { FABToTopButton } from "../UI/Buttons/FABToTopButton/FABToTopButton";
-import { deepPurple } from "@mui/material/colors";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { fetchProducts } from "../../features/products/productsSlice";
 import { product as skeletonProduct } from "../../data/products";
 
 import Pagination from "@mui/material/Pagination";
+import RadioButtons from "../UI/Buttons/RadioButtons/RadioButtons";
 
 function Main() {
   const dispatch = useAppDispatch();
@@ -120,7 +113,6 @@ function Main() {
 
   function checkAddedItem(checkedID: number) {
     return !!storageCartState.find((prod: IProduct) => prod.id === checkedID);
-    // return !!shoppingCartState.find((prod: IProduct) => prod.id === checkedID);
   }
 
   return (
@@ -182,90 +174,7 @@ function Main() {
             marginLeft: "auto",
           }}
         >
-          <ToggleButtonGroup
-            size="small"
-            value={view}
-            exclusive
-            onChange={handleChangeView}
-          >
-            <ToggleButton
-              sx={{
-                width: 40,
-                height: 40,
-                color: deepPurple[900],
-                backgroundColor: deepPurple[50],
-                transition: "0.2s",
-                "&:hover": {
-                  backgroundColor: deepPurple[100],
-                },
-                "&[aria-pressed='true']": {
-                  color: deepPurple[50],
-                  backgroundColor: deepPurple[900],
-                  "&:hover": {
-                    backgroundColor: deepPurple[800],
-                  },
-                },
-              }}
-              value="viewMore"
-              aria-label="view more"
-            >
-              <Tooltip title="View more" arrow TransitionComponent={Zoom}>
-                <div
-                  style={{
-                    display: "flex",
-                    position: "absolute",
-                    top: "0",
-                    right: "0",
-                    bottom: "0",
-                    left: "0",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <AppsSharpIcon />
-                </div>
-              </Tooltip>
-            </ToggleButton>
-
-            <ToggleButton
-              sx={{
-                width: 40,
-                height: 40,
-                color: deepPurple[900],
-                backgroundColor: deepPurple[50],
-                transition: "0.2s",
-                "&:hover": {
-                  backgroundColor: deepPurple[100],
-                },
-                "&[aria-pressed='true']": {
-                  color: deepPurple[50],
-                  backgroundColor: deepPurple[900],
-                  "&:hover": {
-                    backgroundColor: deepPurple[800],
-                  },
-                },
-              }}
-              value="viewLess"
-              aria-label="view less"
-            >
-              <Tooltip title="View less" arrow TransitionComponent={Zoom}>
-                <div
-                  style={{
-                    display: "flex",
-                    position: "absolute",
-                    top: "0",
-                    right: "0",
-                    bottom: "0",
-                    left: "0",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <DragIndicatorSharpIcon />
-                </div>
-              </Tooltip>
-            </ToggleButton>
-          </ToggleButtonGroup>
+          <RadioButtons view={view} handleChangeView={handleChangeView} />
         </div>
       </div>
       <div
@@ -301,11 +210,8 @@ function Main() {
                 ))}
               </div>
             ) : (
-              // !!storageState.length &&
-              // !!storageCartState.length &&
               status === "resolved" &&
               productsData?.map(
-                // storageState?.map(
                 (product: IProduct, idx: number) =>
                   idx >= page * elementsPerPage - elementsPerPage &&
                   idx < page * elementsPerPage && (
