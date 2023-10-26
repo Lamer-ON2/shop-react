@@ -28,9 +28,52 @@ import {
 } from "../../features/products/productsSlice";
 import { IProduct } from "../../models";
 
+import { Badge as BaseBadge, badgeClasses } from "@mui/base/Badge";
+import { styled } from "@mui/system";
+
 const pages = ["Home", "About"];
 const settingsLogged = ["Profile", "Account", "Logout"];
 const settingsNotLogged = ["Login"];
+
+const Badge = styled(BaseBadge)(
+  () => `
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  font-variant: tabular-nums;
+  list-style: none;
+  font-family: IBM Plex Sans, sans-serif;
+  position: relative;
+  display: inline-block;
+  line-height: 1;
+
+  & .${badgeClasses.badge} {
+    z-index: auto;
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 20px;
+    width: 100%;
+    padding: 3px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 20px;
+    white-space: nowrap;
+    text-align: center;
+    border-radius: 50%;
+    background: blue;
+    box-shadow: 0px 4px 8px grey;
+    transform: translate(50%, -50%);
+    transform-origin: 100% 0;
+  }
+
+  & .${badgeClasses.invisible} {
+    display: none;
+  }
+  `
+);
 
 function ResponsiveAppBar() {
   const dispatch = useAppDispatch();
@@ -43,25 +86,29 @@ function ResponsiveAppBar() {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
-  // const [open, setOpen] = React.useState(false);
   let shoppingCartModal = useAppSelector(
     (state) => state.products.shoppingCartModal
   );
   let cartState = useAppSelector((state) => state.products.shoppingCart);
 
+  let cartCountState = useAppSelector(
+    (state) => state.products.shoppingCart.length
+  );
+
+  console.log("cartCountState", cartCountState);
+
   useEffect(() => {}, [cartState]);
+  // useEffect(() => {}, [cartCountState]);
 
   let shoppingCartState: IProduct[] = JSON.parse(
     localStorage.getItem("cart") || "{}"
   );
 
   const handleClickOpen = () => {
-    // setOpen(true);
     dispatch(toggleCartModal());
   };
 
   const handleClose = () => {
-    // setOpen(false);
     dispatch(toggleCartModal());
   };
 
@@ -201,7 +248,9 @@ function ResponsiveAppBar() {
               aria-label="add to the shopping cart"
               onClick={handleClickOpen}
             >
-              <ShoppingCartIcon />
+              <Badge badgeContent={cartCountState} max={99}>
+                <ShoppingCartIcon />
+              </Badge>
             </IconButton>
           </Box>
           <Dialog
